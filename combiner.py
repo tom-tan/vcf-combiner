@@ -32,6 +32,7 @@ if __name__ == '__main__':
         conf['spark.executor.cores'] = args.executor_cores
 
     inputs = []
+    hl.init(spark_conf=conf, log=args.logfile)
     with hl.hadoop_open(args.path_to_input_list, 'r') as f:
     # with open(args.path_to_input_list, 'r') as f:
         if args.n is None:
@@ -41,6 +42,5 @@ if __name__ == '__main__':
 
     temp_path = 'temp'
 
-    hl.init(spark_conf=conf, log=args.logfile)
     hl.experimental.run_combiner(inputs, out_file=args.output, tmp_path=temp_path,
                                  use_genome_default_intervals=True)
