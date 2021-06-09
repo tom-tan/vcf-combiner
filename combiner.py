@@ -6,21 +6,21 @@ from argparse import ArgumentParser
 
 if __name__ == '__main__':
     parser = ArgumentParser()
-    parser.add_argument('input-file', metavar='path_to_input_list',
+    parser.add_argument(metavar='input-file', dest='path_to_input_list',
                         help='a file that lists VCFs (i.e., `*.vcf` or `*.vcf.gz`)')
     parser.add_argument('-n', type=str,
                         help='only use first n items from the input file (default: unlimited)')
-    parser.add_argument('--batch-size', metavar='batch_size', type=str, default='100',
+    parser.add_argument('--batch-size', dest='batch_size', type=str, default='100',
                         help='batch size of the backend Spark cluster')
-    parser.add_argument('--log', metavar='logfile', default='output.log',
+    parser.add_argument('--log', dest='logfile', default='output.log',
                         help='log output file name')
     parser.add_argument('-o', '--output', default='output.mt',
                         help='output directory name')
-    parser.add_argument('--executor-memory', metavar='executor_memory', default='42g',
+    parser.add_argument('--executor-memory', dest='executor_memory', default='42g',
                         help='memory allocation for spark executor')
-    parser.add_argument('--driver-memory', metavar='driver_memory', default='50g',
+    parser.add_argument('--driver-memory', dest='driver_memory', default='50g',
                         help='memory allocation for spark driver')
-    parser.add_argument('--executor-cores', metavar='executor_cores', type=str,
+    parser.add_argument('--executor-cores', dest='executor_cores', type=str,
                         help='#cores for each executor')
     args = parser.parse_args()
 
