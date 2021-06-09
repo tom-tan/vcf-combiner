@@ -3,7 +3,6 @@ import hail as hl
 
 from itertools import islice
 from argparse import ArgumentParser
-from pyspark import SparkContext, SparkConf
 
 if __name__ == '__main__':
     parser = ArgumentParser()
