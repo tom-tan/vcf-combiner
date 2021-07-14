@@ -8,7 +8,7 @@ if __name__ == '__main__':
     parser = ArgumentParser()
     parser.add_argument(metavar='input-file', dest='path_to_input_list',
                         help='a file that lists VCFs (i.e., `*.vcf` or `*.vcf.gz`)')
-    parser.add_argument('-n', type=str,
+    parser.add_argument('-n', type=int,
                         help='only use first n items from the input file (default: unlimited)')
     parser.add_argument('--batch-size', dest='batch_size', type=str, default='100',
                         help='batch size of the backend Spark cluster')
