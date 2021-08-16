@@ -52,5 +52,10 @@ if __name__ == '__main__':
         else:
             inputs = list(islice((line.strip() for line in f), 0, args.n))
 
+    if args.branch_factor:
+        factor = args.branch_factor
+    else:
+        factor = 100
+
     hl.experimental.run_combiner(inputs, out_file=args.output, tmp_path=args.tmpdir,
-                                 use_genome_default_intervals=True, branch_factor=args.branch_factor)
+                                 use_genome_default_intervals=True, branch_factor=factor)
