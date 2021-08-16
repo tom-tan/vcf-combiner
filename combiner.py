@@ -26,6 +26,8 @@ if __name__ == '__main__':
                         help='memory allocation for spark driver')
     parser.add_argument('--executor-cores', dest='executor_cores', type=str,
                         help='#cores for each executor')
+    parser.add_argument('--branch-factor', dest='branch_factor', type=int,
+                        help='branch factor to hierarchically merge GVCFs')
     args = parser.parse_args()
 
     conf = {
@@ -51,4 +53,4 @@ if __name__ == '__main__':
             inputs = list(islice((line.strip() for line in f), 0, args.n))
 
     hl.experimental.run_combiner(inputs, out_file=args.output, tmp_path=args.tmpdir,
-                                 use_genome_default_intervals=True)
+                                 use_genome_default_intervals=True, branch_factor=args.branch_factor)
