@@ -28,6 +28,8 @@ if __name__ == '__main__':
                         help='#cores for each executor')
     parser.add_argument('--branch-factor', dest='branch_factor', type=int,
                         help='branch factor to hierarchically merge GVCFs')
+    parser.add_argument('--batch-size', dest='batch_size', type=int,
+                        help='batch size')
     args = parser.parse_args()
 
     conf = {
@@ -57,5 +59,10 @@ if __name__ == '__main__':
     else:
         factor = 100
 
+    if args.batch_size:
+        bsize = args.batch_size
+    else:
+        bsize = 100
+
     hl.experimental.run_combiner(inputs, out_file=args.output, tmp_path=args.tmpdir,
-                                 use_genome_default_intervals=True, branch_factor=factor)
+                                 use_genome_default_intervals=True, branch_factor=factor, batch_size=bsize)
