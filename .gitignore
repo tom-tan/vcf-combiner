@@ -127,3 +127,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# input list and output directories
+autosome-list.txt
+autosome-md5sum.txt
+/ret-*/
