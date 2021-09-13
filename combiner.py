@@ -3,6 +3,8 @@ import hail as hl
 
 from itertools import islice
 from argparse import ArgumentParser
+from os import getcwd, makedirs
+from os.path import join, realpath
 
 from pyspark import SparkConf, SparkContext
 
@@ -19,7 +21,7 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--output', default='output.mt',
                         help='output directory name')
     parser.add_argument('--tmpdir', default='temp', type=str,
-                        help='directory for intermediate output')
+                        help='directory for intermediate output. It must be network visible path.')
     parser.add_argument('--executor-memory', dest='executor_memory', default='42g',
                         help='memory allocation for spark executor')
     parser.add_argument('--driver-memory', dest='driver_memory', default='50g',
@@ -30,7 +32,10 @@ if __name__ == '__main__':
                         help='branch factor to hierarchically merge GVCFs')
     parser.add_argument('--batch-size', dest='batch_size', type=int,
                         help='batch size')
+    # parser.add_argument('--force', help='force output to the existing directory')
     args = parser.parse_args()
+
+    pwd = getcwd()
 
     conf = {
         'spark.executor.memory': args.executor_memory,
@@ -45,10 +50,20 @@ if __name__ == '__main__':
         con = SparkConf()
         con.setMaster(args.master)
         sc = SparkContext(con)
+    
+    if args.tmpdir is None:
+        base_tmpdir = join(realpath(pwd), 'tmp')
+    else:
+        base_tmpdir = realpath(args.tmpdir)
+
+    network_tmpdir = join(base_tmpdir, 'network-tmp')
+    makedirs(network_tmpdir)
+    combiner_tmpdir = join(base_tmpdir, 'combiner-tmp')
+    makedirs(combiner_tmpdir)
 
     inputs = []
-    hl.init(sc=sc, spark_conf=conf, log=args.logfile)
-    with hl.hadoop_open(args.path_to_input_list, 'r') as f:
+    hl.init(sc=sc, spark_conf=conf, log=realpath(args.logfile), tmp_dir=network_tmpdir)
+    with hl.hadoop_open(realpath(args.path_to_input_list), 'r') as f:
         if args.n is None:
             inputs = [line.strip() for line in f]
         else:
@@ -64,5 +79,6 @@ if __name__ == '__main__':
     else:
         bsize = 100
 
-    hl.experimental.run_combiner(inputs, out_file=args.output, tmp_path=args.tmpdir,
-                                 use_genome_default_intervals=True, branch_factor=factor, batch_size=bsize)
+    hl.experimental.run_combiner(inputs, out_file=realpath(args.output), tmp_path=combiner_tmpdir,
+                                 use_genome_default_intervals=True, branch_factor=factor, batch_size=bsize,
+                                 reference_genome='GRCh38')
