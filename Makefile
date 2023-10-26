@@ -32,12 +32,12 @@ start-containers:
 	@test -e workers || (echo 'File `workers` not found. See `workers.sample` for preparation' && false)
 	@mkdir -p ${DIR}/log ${DIR}/work
 	@cat workers | grep -v "^#" | xargs -n 1 -i ssh ${USER}@{} ${RUNTIME} instance start \
-      -B $(mktemp -d ${DIR}/run/$(hostname)_XXXX):/run \
-      -B ${DIR}/log/:/usr/local/spark/logs \
-      -B ${DIR}/work/:/usr/local/spark/work \
-      -B ${DIR}/workers:/usr/local/spark/conf/workers \
+	  -B $(mktemp -d ${DIR}/run/$(hostname)_XXXX):/run \
+	  -B ${DIR}/log/:/usr/local/spark/logs \
+	  -B ${DIR}/work/:/usr/local/spark/work \
+	  -B ${DIR}/workers:/usr/local/spark/conf/workers \
 	  ${EXTRA_ARGS} \
-      ${DIR}/spark.sif spark
+	  ${DIR}/spark.sif spark
 
 start-cluster: start-containers
 	@${RUNTIME} exec instance://spark start-all.sh

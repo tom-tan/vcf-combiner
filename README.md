@@ -13,7 +13,7 @@
   ```console
   $ make build
   ```
-  - It build a SIF image `spark.sif` with spark runtime and hail.
+  - It builds a SIF image `spark.sif` with spark runtime and hail.
 
 - Make the `workers` file that enumerates the worker nodes.
   - See `workers.sample` for details.
