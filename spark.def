@@ -1,0 +1,39 @@
+BootStrap: library
+From: ubuntu:22.04
+
+%environment
+  PATH=/usr/local/spark/bin:/usr/local/spark/sbin:$PATH
+
+  # Port option should match what we set Dropbear to listen on
+  SPARK_SSH_OPTS="-p 2222 -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+  
+  export PATH SPARK_SSH_OPTS
+
+%runscript
+  /usr/local/spark/bin/spark-submit "$@"
+
+%startscript
+  /etc/init.d/dropbear start
+
+%post
+  apt-get update && apt-get install -y wget \
+    python3 python-is-python3 python3-pip openjdk-11-jre-headless openssh-client dropbear
+
+  # Set Dropbear port to 2222 (or whatever port was selected above)
+  sed -i -e 's@\(DROPBEAR_PORT=\).*@\12222@' /etc/default/dropbear
+  rm /etc/dropbear/dropbear_rsa_host_key /etc/dropbear/dropbear_ecdsa_host_key
+  chmod o+r /etc/dropbear/dropbear_ed25519_host_key
+  # disable password logins
+  sed -i -e 's@\(DROPBEAR_EXTRA_ARGS=\).*@\1"-s -r /etc/dropbear/dropbear_ed25519_host_key"@' /etc/default/dropbear
+  # Use `dropbear -E` for debug
+
+  pip3 install hail==0.2.124
+
+  HAIL_DIR=$(pip3 show hail | grep ^Location | awk '{ print $2 }')/hail/backend
+  echo "export HAIL_DIR=\"${HAIL_DIR}\"" >> $SINGULARITY_ENVIRONMENT
+
+  cd /usr/local
+
+  mkdir spark
+  wget https://archive.apache.org/dist/spark/spark-3.3.3/spark-3.3.3-bin-hadoop3.tgz -O - | \
+    tar zxf - -C spark --no-same-owner --strip-components 1

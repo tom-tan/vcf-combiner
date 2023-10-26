@@ -1,0 +1,6 @@
+# This file enumerates host names to be used as worker nodes
+# Rename this file to `workers` and fix the host names for your environment
+host1
+host2
+host3
+# host4
