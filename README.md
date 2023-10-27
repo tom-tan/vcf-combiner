@@ -25,7 +25,7 @@
   ```
   - It starts daemons with the `$RUNTIME instance` command and starts the culster with `start-all.sh`.
   - It generates the `log` directory for worker logs and the `work` directory.
-  - You can use `$EXTRA_ARGS` to pass extra arguments such as mount points. For example:
+  - You can use `$EXTRA_ARGS` to pass extra arguments to `$RUNTIME`. For example:
     ```console
     master-node $ make start EXTRA_ARGS="-B /path/to/extra/dir:/path/to/extra/dir"
     ```
